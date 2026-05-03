@@ -42,6 +42,12 @@ DEALINGS IN THE SOFTWARE.
 #define NRF52_LEDMATRIX_STATUS_RESET            0x01
 #define NRF52_LEDMATRIX_STATUS_LIGHTREADY       0x02
 
+//
+// Event codes raised by the NRF52LedMatrix
+//
+#define DISPLAY_EVT_LIGHT_LEVEL_LOW             1
+#define DISPLAY_EVT_LIGHT_LEVEL_HIGH            2
+
 namespace codal
 {
     /**
@@ -63,6 +69,16 @@ namespace codal
         
         int8_t              gpiote[NRF52_LED_MATRIX_MAXIMUM_COLUMNS];            // GPIOTE channels used by output columns.
         int8_t              ppi[NRF52_LED_MATRIX_MAXIMUM_COLUMNS];               // PPI channels used by output columns.
+
+        enum LightLevelEval
+        {
+          UNKNOWN,
+          DARK,
+          LIGHT,
+        }
+
+        uint8_t             lightLevelThreshold;    // Threshold used to determine whether the sampled light level is considered "light" or "dark"
+        LightLevelEval      lightLevelEval;         // Evaluation of the light level compared to the threshold.
 
         public:
         /**

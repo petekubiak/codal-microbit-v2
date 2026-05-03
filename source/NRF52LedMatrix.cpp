@@ -60,6 +60,8 @@ NRF52LEDMatrix::NRF52LEDMatrix(NRFLowLevelTimer &displayTimer, const MatrixMap &
     strobeRow = 0;
     instance = this;
     lightLevel = 0;
+    lightLevelThreshold = 128;
+    lightLevelEval = UNKNOWN;
     this->mode = mode;
 
     // Validate that we can deliver the requested display.
@@ -231,6 +233,9 @@ void NRF52LEDMatrix::render()
         lightLevel = 255 - ((255 * timer.timer->CC[1]) / (timerPeriod * NRF52_LED_MATRIX_LIGHTSENSE_STROBES));
         status |= NRF52_LEDMATRIX_STATUS_LIGHTREADY;
 
+        // Notify that we have taken a new light sense reading.
+        Event event(id, LED_MATRIX_EVT_LIGHT_SENSE);
+
         // Restore the hardware configuration into LED drive mode.
         status |= NRF52_LEDMATRIX_STATUS_RESET;
         setDisplayMode(mode);
@@ -398,6 +403,44 @@ int NRF52LEDMatrix::setSleep(bool doSleep)
     }
    
     return DEVICE_OK;
+}
+
+/**
+ * Light sensing update callback
+ */
+void NRF52LEDMatrix::onLightSense(MicroBitEvent)
+{
+    LightLevelEval levelEvaluation = UNKNOWN;
+
+    if (lightLevel >= lightLevelThreshold)
+    {
+        levelEvaluation = LIGHT;
+    }
+    else
+    {
+        levelEvaluation = DARK;
+    }
+
+    if (levelEvaluation != lightlevelEval)
+    {
+        switch levelEvaluation
+        {
+            case LIGHT:
+                Event evt(id, DISPLAY_EVT_LIGHT_LEVEL_HIGH);
+                break;
+            case DARK:
+                Event evt(id, DISPLAY_EVT_LIGHT_LEVEL_LOW);
+                break;
+            case UNKNOWN:
+                // Unreachable
+                // TODO: Is there a way to flag a logic error if this case is reached?
+                break;
+            default:
+                break;
+        }
+    }
+
+    lightlevelEval = levelEvaluation;
 }
 
 /**
