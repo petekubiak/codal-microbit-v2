@@ -412,6 +412,25 @@ int NRF52LEDMatrix::setSleep(bool doSleep)
 }
 
 /**
+ * Sets the threshold used to determine whether we are in the light or the dark
+ * @param threshold The threshold value to use (0 - 255)
+ */
+void NRF52LEDMatrix::setLightLevelThreshold(uint8_t const threshold)
+{
+    lightLevelThreshold = threshold;
+}
+
+/**
+ * Gets the current light level threshold setting
+ *
+ * @return The threshold as a uint8
+ */
+uint8_t NRF52LEDMatrix::getLightLevelThreshold(void)
+{
+    return lightLevelThreshold;
+}
+
+/**
  * Light sensing update callback
  */
 void NRF52LEDMatrix::onLightSense(MicroBitEvent)
@@ -429,13 +448,13 @@ void NRF52LEDMatrix::onLightSense(MicroBitEvent)
 
     if (levelEvaluation != lightLevelEval)
     {
-        switch levelEvaluation
+        switch (levelEvaluation)
         {
             case LIGHT:
-                Event evt(id, DISPLAY_EVT_LIGHT_LEVEL_HIGH);
+                Event(id, NRF52_LEDMATRIX_EVT_LIGHT_LEVEL_HIGH);
                 break;
             case DARK:
-                Event evt(id, DISPLAY_EVT_LIGHT_LEVEL_LOW);
+                Event(id, NRF52_LEDMATRIX_EVT_LIGHT_LEVEL_LOW);
                 break;
             case UNKNOWN:
                 // Unreachable

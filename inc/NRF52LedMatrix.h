@@ -184,6 +184,20 @@ namespace codal
          * Puts the component in (or out of) sleep (low power) mode.
          */
         virtual int setSleep(bool doSleep) override;
+
+        /**
+         * Sets the threshold used to determine whether the Microbit is in the light or the dark (0 - 255)
+         *
+         * @param threshold The threshold to use
+         */
+        void setLightLevelThreshold(uint8_t const threshold);
+
+        /**
+         * Gets the current light level threshold setting
+         *
+         * @return The light level threshold currently set
+         */
+        uint8_t getLightLevelThreshold(void);
         
         /**
          * Destructor for CodalDisplay, where we deregister this instance from the array of system components.
