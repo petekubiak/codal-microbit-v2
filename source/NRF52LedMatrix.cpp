@@ -74,6 +74,12 @@ NRF52LEDMatrix::NRF52LEDMatrix(NRFLowLevelTimer &displayTimer, const MatrixMap &
 
         this->enable();
     }
+
+    // Set up the light sense event listener
+    if (EventModel::defaultEventBus != NULL)
+    {
+        EventModel::defaultEventBus->listen(DEVICE_ID_DISPLAY, LED_MATRIX_EVT_LIGHT_SENSE, this, &NRF52LEDMatrix::onLightSense);
+    }
 }
 
 /**
@@ -433,9 +439,10 @@ void NRF52LEDMatrix::onLightSense(MicroBitEvent)
                 break;
             case UNKNOWN:
                 // Unreachable
-                // TODO: Is there a way to flag a logic error if this case is reached?
+                // TODO: Is there a way to flag a logic error to the developer if this case is reached?
                 break;
             default:
+                // Unreachable
                 break;
         }
     }
