@@ -427,7 +427,7 @@ void NRF52LEDMatrix::onLightSense(MicroBitEvent)
         levelEvaluation = DARK;
     }
 
-    if (levelEvaluation != lightlevelEval)
+    if (levelEvaluation != lightLevelEval)
     {
         switch levelEvaluation
         {
@@ -447,7 +447,6 @@ void NRF52LEDMatrix::onLightSense(MicroBitEvent)
         }
     }
 
-    lightlevelEval = levelEvaluation;
 }
 
 /**

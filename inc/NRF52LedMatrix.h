@@ -28,6 +28,7 @@ DEALINGS IN THE SOFTWARE.
 #include "CodalConfig.h"
 #include "LEDMatrix.h"
 #include "NRFLowLevelTimer.h"
+#include "MicroBitCompat.h"
 
 #define NRF52_LED_MATRIX_CLOCK_FREQUENCY        16000000            // Frequency of underlying hardware clock (must b 1MHz, 2Mhz 4Mhz, 8Mhz or 16MHz)
 #define NRF52_LED_MATRIX_FREQUENCY              60                  // Frequency of the frame update for the display
@@ -45,8 +46,8 @@ DEALINGS IN THE SOFTWARE.
 //
 // Event codes raised by the NRF52LedMatrix
 //
-#define DISPLAY_EVT_LIGHT_LEVEL_LOW             1
-#define DISPLAY_EVT_LIGHT_LEVEL_HIGH            2
+#define NRF52_LEDMATRIX_EVT_LIGHT_LEVEL_LOW             4
+#define NRF52_LEDMATRIX_EVT_LIGHT_LEVEL_HIGH            5
 
 namespace codal
 {
@@ -75,7 +76,7 @@ namespace codal
           UNKNOWN,
           DARK,
           LIGHT,
-        }
+        };
 
         uint8_t             lightLevelThreshold;    // Threshold used to determine whether the sampled light level is considered "light" or "dark"
         LightLevelEval      lightLevelEval;         // Evaluation of the light level compared to the threshold.
@@ -188,6 +189,10 @@ namespace codal
          * Destructor for CodalDisplay, where we deregister this instance from the array of system components.
          */
         ~NRF52LEDMatrix();
+
+        private:
+
+        void onLightSense(MicroBitEvent event);
     };
 }
 
